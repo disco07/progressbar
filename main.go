@@ -1,43 +1,41 @@
-package progress_bar
+package main
 
 import (
 	"fmt"
-	"time"
 )
 
-// Bar ...
 type Bar struct {
-	percent int64  // progress percentage
-	cur     int64  // current progress
-	total   int64  // total value for progress
-	rate    string // the actual progress bar to be printed
-	graph   string // the fill value for progress bar
+	percent int64
+	current int64
+	total   int64
+	rate    string
+	graph   string
 }
 
-func (bar *Bar) NewOption(start, total int64) {
-	bar.cur = start
-	bar.total = total
+func (bar *Bar) NewOption(start, end int64) {
+	bar.current = start
+	bar.total = end
 	if bar.graph == "" {
 		bar.graph = "#"
 	}
 	bar.percent = bar.getPercent()
-	for i := 0; i < int(bar.percent); i += 2 {
-		bar.rate += bar.graph // initial progress position
+	for i := 0; i < int(bar.percent); i += 1 {
+		bar.rate += bar.graph
 	}
 }
 
 func (bar *Bar) getPercent() int64 {
-	return int64((float32(bar.cur) / float32(bar.total)) * 100)
+	return int64((float32(bar.current) / float32(bar.total)) * 100)
 }
 
-func (bar *Bar) Play(cur int64) {
-	bar.cur = cur
+func (bar *Bar) PlayBar(current int64) {
+	bar.current = current
 	last := bar.percent
 	bar.percent = bar.getPercent()
 	if bar.percent != last && bar.percent%2 == 0 {
 		bar.rate += bar.graph
 	}
-	fmt.Printf("\r[%-50s]%3d%% %8d/%d", bar.rate, bar.percent, bar.cur, bar.total)
+	fmt.Printf("\r[%-50s]%3d%% %8d/%d", bar.rate, bar.percent, bar.current, bar.total)
 }
 
 func (bar *Bar) Finish() {
@@ -47,9 +45,12 @@ func (bar *Bar) Finish() {
 func ProgressBar(end int64) {
 	var bar Bar
 	bar.NewOption(0, end)
-	for i := 0; i <= 100; i++ {
-		time.Sleep(10 * time.Millisecond)
-		bar.Play(int64(i))
+	for i := 0; i <= int(end); i++ {
+		bar.PlayBar(int64(i))
 	}
 	bar.Finish()
+}
+
+func main() {
+	ProgressBar(100)
 }
