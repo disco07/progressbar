@@ -18,7 +18,7 @@ func (bar *Bar) NewOption(start, total int64) {
 	bar.cur = start
 	bar.total = total
 	if bar.graph == "" {
-		bar.graph = "â–ˆ"
+		bar.graph = "#"
 	}
 	bar.percent = bar.getPercent()
 	for i := 0; i < int(bar.percent); i += 2 {
@@ -41,14 +41,14 @@ func (bar *Bar) Play(cur int64) {
 }
 
 func (bar *Bar) Finish() {
-	fmt.Println()
+	fmt.Println("\nFinished")
 }
 
 func main() {
 	var bar Bar
 	bar.NewOption(0, 100)
 	for i := 0; i <= 100; i++ {
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(10 * time.Millisecond)
 		bar.Play(int64(i))
 	}
 	bar.Finish()
