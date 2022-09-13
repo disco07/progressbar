@@ -1,4 +1,4 @@
-package progressBar
+package main
 
 import (
 	"fmt"
