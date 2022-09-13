@@ -1,4 +1,4 @@
-package main
+package progress_bar
 
 import (
 	"fmt"
@@ -44,9 +44,9 @@ func (bar *Bar) Finish() {
 	fmt.Println("\nFinished")
 }
 
-func main() {
+func ProgressBar(end int64) {
 	var bar Bar
-	bar.NewOption(0, 100)
+	bar.NewOption(0, end)
 	for i := 0; i <= 100; i++ {
 		time.Sleep(10 * time.Millisecond)
 		bar.Play(int64(i))
