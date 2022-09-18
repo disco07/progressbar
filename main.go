@@ -51,4 +51,6 @@ func ProgressBar(end int64) {
 
 func main() {
 	ProgressBar(100)
+	fmt.Println("")
+	go ProgressBar(100)
 }
