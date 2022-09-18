@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 type Bar struct {
@@ -38,17 +39,14 @@ func (bar *Bar) PlayBar(current int64) {
 	fmt.Printf("\r[%-50s]%3d%% %8d/%d", bar.rate, bar.percent, bar.current, bar.total)
 }
 
-func (bar *Bar) Finish() {
-	fmt.Println("\nFinished")
-}
-
 func ProgressBar(end int64) {
 	var bar Bar
 	bar.NewOption(0, end)
 	for i := 0; i <= int(end); i++ {
+		time.Sleep(100 * time.Millisecond)
 		bar.PlayBar(int64(i))
 	}
-	bar.Finish()
+	fmt.Println("\nFinished")
 }
 
 func main() {
