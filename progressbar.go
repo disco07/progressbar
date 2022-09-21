@@ -13,7 +13,7 @@ type Bar struct {
 	graph   string
 }
 
-func NewOption(end int64) *Bar {
+func newOption(end int64) *Bar {
 	current := int64(0)
 	total := end
 	graph := "#"
@@ -32,9 +32,10 @@ func getPercent(current, total int64) int64 {
 }
 
 func (b *Bar) PlayBar(current int) error {
+	fmt.Println(b.total)
 	currentNum := int64(current)
 	if b.total == 0 {
-		return errors.New("max must be greater than 0")
+		return errors.New("the end must be greater than 0")
 	}
 
 	b.current = currentNum
@@ -54,7 +55,7 @@ func (b *Bar) PlayBar(current int) error {
 }
 
 func Default(end int64) *Bar {
-	return NewOption(end)
+	return newOption(end)
 }
 
 //func main() {
