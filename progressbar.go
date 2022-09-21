@@ -1,4 +1,4 @@
-package progressbar
+package main
 
 import (
 	"errors"
@@ -32,12 +32,10 @@ func getPercent(current, total int64) int64 {
 }
 
 func (b *Bar) PlayBar(current int) error {
-	fmt.Println(b.total)
-	currentNum := int64(current)
 	if b.total == 0 {
 		return errors.New("the end must be greater than 0")
 	}
-
+	currentNum := int64(current)
 	b.current = currentNum
 	last := b.percent
 	b.percent = getPercent(currentNum, b.total)
@@ -58,10 +56,14 @@ func Default(end int64) *Bar {
 	return newOption(end)
 }
 
-//func main() {
-//	bar := Default(50)
-//	for i := 0; i <= 50; i++ {
-//		time.Sleep(50 * time.Millisecond)
-//		bar.PlayBar(i)
-//	}
-//}
+func main() {
+	bar := Default(0)
+
+	for i := 0; i <= 0; i++ {
+		err := bar.PlayBar(0)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}

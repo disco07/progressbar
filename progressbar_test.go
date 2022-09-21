@@ -1,8 +1,7 @@
-package progressbar
+package main
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 	"time"
 )
@@ -29,9 +28,14 @@ func TestNewOption(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
 			bar := newOption(tt.end)
-			for i := 0; i < int(tt.end); i++ {
-				if err := bar.PlayBar(i); err != nil {
-					time.Sleep(10 * time.Millisecond)
+			for i := 0; i <= int(tt.end); i++ {
+				err := bar.PlayBar(i)
+				time.Sleep(10 * time.Millisecond)
+				if tt.expected == nil && err != nil {
+					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
+				}
+
+				if tt.expected != nil && err.Error() != tt.expected.Error() {
 					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
 				}
 			}
@@ -54,18 +58,21 @@ func TestDefault(t *testing.T) {
 		{
 			description: "the end must be greater than 0",
 			end:         0,
-			expected:    nil,
+			expected:    errors.New("the end must be greater than 0"),
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
 			bar := Default(tt.end)
-			for i := 0; i < int(tt.end); i++ {
+			for i := 0; i <= int(tt.end); i++ {
 				err := bar.PlayBar(i)
-				fmt.Println(err)
-				if err != nil {
-					time.Sleep(10 * time.Millisecond)
+				time.Sleep(10 * time.Millisecond)
+				if tt.expected == nil && err != nil {
+					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
+				}
+
+				if tt.expected != nil && err.Error() != tt.expected.Error() {
 					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
 				}
 			}
