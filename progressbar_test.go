@@ -27,7 +27,7 @@ func TestNewOption(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			bar := newOption(tt.end)
+			bar := NewOption(tt.end)
 			for i := 0; i <= int(tt.end); i++ {
 				err := bar.PlayBar(i)
 				time.Sleep(10 * time.Millisecond)

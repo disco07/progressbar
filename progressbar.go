@@ -13,7 +13,7 @@ type Bar struct {
 	graph   string
 }
 
-func newOption(end int64) *Bar {
+func NewOption(end int64) *Bar {
 	current := int64(0)
 	total := end
 	graph := "#"
@@ -35,6 +35,7 @@ func (b *Bar) PlayBar(current int) error {
 	if b.total == 0 {
 		return errors.New("the end must be greater than 0")
 	}
+
 	currentNum := int64(current)
 	b.current = currentNum
 	last := b.percent
@@ -42,16 +43,11 @@ func (b *Bar) PlayBar(current int) error {
 	if b.percent != last && b.percent%2 == 0 {
 		b.rate += b.graph
 	}
-
-	if b.current > b.total {
-		return errors.New("current number exceeds total")
-	}
-
 	fmt.Printf("\r[%-50s]%3d%% %8d/%d", b.rate, b.percent, b.current, b.total)
 
 	return nil
 }
 
 func Default(end int64) *Bar {
-	return newOption(end)
+	return NewOption(end)
 }
