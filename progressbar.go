@@ -1,4 +1,4 @@
-package main
+package progressbar
 
 import (
 	"errors"
@@ -54,16 +54,4 @@ func (b *Bar) PlayBar(current int) error {
 
 func Default(end int64) *Bar {
 	return newOption(end)
-}
-
-func main() {
-	bar := Default(0)
-
-	for i := 0; i <= 0; i++ {
-		err := bar.PlayBar(0)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	}
 }
