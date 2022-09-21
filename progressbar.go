@@ -3,17 +3,17 @@ package main
 import (
 	"errors"
 	"fmt"
-	"math"
 	"strings"
 	"time"
 )
 
 type Bar struct {
-	percent int64
-	current int64
-	rate    string
-	graph   string
-	config  config
+	percent          float64
+	current          int64
+	rate             string
+	graph            string
+	currentGraphRate int
+	config           config
 }
 
 type config struct {
@@ -23,7 +23,7 @@ type config struct {
 func NewOption(end int64) *Bar {
 	current := int64(0)
 	total := end
-	graph := "#"
+	graph := "█"
 	percent := getPercent(current, total)
 
 	return &Bar{
@@ -36,8 +36,8 @@ func NewOption(end int64) *Bar {
 	}
 }
 
-func getPercent(current, total int64) int64 {
-	return int64((float32(current) / float32(total)) * 100)
+func getPercent(current, total int64) float64 {
+	return 100 * (float64(current) / float64(total))
 }
 
 func (b *Bar) Add(current int) error {
@@ -52,12 +52,12 @@ func (b *Bar) Add(current int) error {
 		return errors.New("current exceeds total")
 	}
 	b.percent = getPercent(b.current, b.config.total)
-	var graphRate float64
-	graphRate = 50 / float64(b.config.total)
+	lastGraphRate := b.currentGraphRate
+	b.currentGraphRate = int(b.percent / 100.0 * 50.0)
 	if b.percent != last {
-		b.rate += strings.Repeat(b.graph, int(math.Ceil(graphRate)))
+		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
 	}
-	fmt.Printf("\r[%-50s]%3d%% %8d/%d", b.rate, b.percent, b.current, b.config.total)
+	fmt.Printf("\r[%-50s]%3d%% %8d/%d", b.rate, int(b.percent), b.current, b.config.total)
 
 	return nil
 }
@@ -67,9 +67,9 @@ func Default(end int64) *Bar {
 }
 
 func main() {
-	bar := Default(100)
-	for i := 0; i < int(100); i++ {
-		time.Sleep(10 * time.Millisecond)
+	bar := Default(130)
+	for i := 0; i < int(130); i++ {
+		time.Sleep(100 * time.Millisecond)
 		bar.Add(1)
 	}
 }
