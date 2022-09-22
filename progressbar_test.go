@@ -1,4 +1,4 @@
-package progressbar
+package main
 
 import (
 	"errors"
@@ -14,8 +14,8 @@ func TestNewOption(t *testing.T) {
 		expected    error
 	}{
 		{
-			description: "normal progress bar",
-			end:         100,
+			description: "work",
+			end:         50,
 			expected:    nil,
 		},
 		{
@@ -27,10 +27,15 @@ func TestNewOption(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			bar := newOption(tt.end)
+			var bar *Bar
+			if tt.description == "work" {
+				bar = NewOption(tt.end + 1)
+			} else {
+				bar = NewOption(tt.end)
+			}
 			for i := 0; i <= int(tt.end); i++ {
-				err := bar.PlayBar(i)
-				time.Sleep(10 * time.Millisecond)
+				err := bar.Add(1)
+				time.Sleep(100 * time.Millisecond)
 				if tt.expected == nil && err != nil {
 					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
 				}
@@ -66,7 +71,7 @@ func TestDefault(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			bar := Default(tt.end)
 			for i := 0; i <= int(tt.end); i++ {
-				err := bar.PlayBar(i)
+				err := bar.Add(1)
 				time.Sleep(10 * time.Millisecond)
 				if tt.expected == nil && err != nil {
 					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
