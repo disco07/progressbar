@@ -17,7 +17,8 @@ type Bar struct {
 }
 
 type config struct {
-	total int64
+	total      int64
+	graphWidth int64
 }
 
 func NewOption(end int64) *Bar {
@@ -31,7 +32,8 @@ func NewOption(end int64) *Bar {
 		current: current,
 		graph:   graph,
 		config: config{
-			total: total,
+			total:      total,
+			graphWidth: 50,
 		},
 	}
 }
@@ -53,7 +55,7 @@ func (b *Bar) Add(current int) error {
 	}
 	b.percent = getPercent(b.current, b.config.total)
 	lastGraphRate := b.currentGraphRate
-	b.currentGraphRate = int(b.percent / 100.0 * 50.0)
+	b.currentGraphRate = int(b.percent / 100.0 * float64(b.config.graphWidth))
 	if b.percent != last {
 		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
 	}
@@ -67,8 +69,8 @@ func Default(end int64) *Bar {
 }
 
 func main() {
-	bar := Default(130)
-	for i := 0; i < int(130); i++ {
+	bar := Default(110)
+	for i := 0; i < int(110); i++ {
 		time.Sleep(100 * time.Millisecond)
 		bar.Add(1)
 	}
