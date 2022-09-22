@@ -56,7 +56,7 @@ func TestDefault(t *testing.T) {
 		expected    error
 	}{
 		{
-			description: "normal progress bar",
+			description: "work",
 			end:         100,
 			expected:    nil,
 		},
@@ -69,10 +69,15 @@ func TestDefault(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			bar := Default(tt.end)
+			var bar *Bar
+			if tt.description == "work" {
+				bar = Default(tt.end + 1)
+			} else {
+				bar = Default(tt.end)
+			}
 			for i := 0; i <= int(tt.end); i++ {
 				err := bar.Add(1)
-				time.Sleep(10 * time.Millisecond)
+				time.Sleep(100 * time.Millisecond)
 				if tt.expected == nil && err != nil {
 					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
 				}
