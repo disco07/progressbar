@@ -1,10 +1,9 @@
-package main
+package progressbar
 
 import (
 	"errors"
 	"fmt"
 	"strings"
-	"time"
 )
 
 type Bar struct {
@@ -66,12 +65,4 @@ func (b *Bar) Add(current int) error {
 
 func Default(end int64) *Bar {
 	return NewOption(end)
-}
-
-func main() {
-	bar := Default(110)
-	for i := 0; i < int(110); i++ {
-		time.Sleep(100 * time.Millisecond)
-		bar.Add(1)
-	}
 }
