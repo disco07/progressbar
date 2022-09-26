@@ -41,7 +41,7 @@ func getPercent(current, total int64) float64 {
 	return 100 * (float64(current) / float64(total))
 }
 
-// Add is a func add the number passed as a parameter to the progress bar.
+// Add is a func who add the number passed as a parameter to the progress bar.
 func (b *Bar) Add(num int) error {
 	if b.config.total == 0 {
 		return errors.New("the end must be greater than 0")
