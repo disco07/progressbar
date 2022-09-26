@@ -63,6 +63,9 @@ func (b *Bar) Add(current int) error {
 	return nil
 }
 
+// Default is a basic usage of progress bar.
+// In parameter, the max size of things you want to view progress.
+// It returns a pointer of Bar.
 func Default(end int64) *Bar {
 	return NewOption(end)
 }
