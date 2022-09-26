@@ -49,7 +49,7 @@ func (b *Bar) view() error {
 	if b.percent != last {
 		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
 	}
-	fmt.Printf("\r[%-*s]%3d%% %8d/%d", b.config.graphWidth, b.rate, int(b.percent), b.current, b.config.total)
+	fmt.Printf("\r[%-*s]%3d%% %5d/%d", b.config.graphWidth, b.rate, int(b.percent), b.current, b.config.total)
 
 	return nil
 }
