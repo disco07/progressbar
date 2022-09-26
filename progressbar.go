@@ -41,6 +41,7 @@ func getPercent(current, total int64) float64 {
 	return 100 * (float64(current) / float64(total))
 }
 
+// Add
 func (b *Bar) Add(current int) error {
 	if b.config.total == 0 {
 		return errors.New("the end must be greater than 0")
