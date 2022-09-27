@@ -2,6 +2,8 @@
 ![Coverage](https://img.shields.io/badge/Coverage-100.0%25-brightgreen)
 
 # progressbar
+A simple progress bar for golang projects. I created that because there was a long processus in some projet and I didn't know what was the progression.
+
 
 ## Installation
 ```golang
