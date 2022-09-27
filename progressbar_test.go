@@ -52,7 +52,7 @@ func TestSetTheme(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var bar *Bar
-			bar = NewOption(10)
+			bar = New(10)
 			bar.SetTheme(tt.parameter)
 			if bar.theme != tt.parameter {
 				t.Errorf("Bad parameter got %v want %v", bar.theme, tt.parameter)
@@ -61,7 +61,7 @@ func TestSetTheme(t *testing.T) {
 	}
 }
 
-func TestNewOption(t *testing.T) {
+func TestNew(t *testing.T) {
 
 	tests := []struct {
 		description string
@@ -84,9 +84,9 @@ func TestNewOption(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			var bar *Bar
 			if tt.description == "work" {
-				bar = NewOption(tt.end + 1)
+				bar = New(tt.end + 1)
 			} else {
-				bar = NewOption(tt.end)
+				bar = New(tt.end)
 			}
 			for i := 0; i <= int(tt.end); i++ {
 				err := bar.Add(1)
