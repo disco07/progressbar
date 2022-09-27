@@ -8,12 +8,12 @@ import (
 )
 
 type Bar struct {
-	state  State
+	state  state
 	option option
 	theme  Theme
 }
 
-type State struct {
+type state struct {
 	percent          float64
 	current          int64
 	currentGraphRate int
@@ -49,7 +49,7 @@ func (b *Bar) SetTheme(t Theme) {
 
 func New(end int64) *Bar {
 	return &Bar{
-		state: State{
+		state: state{
 			percent: getPercent(int64(0), end),
 			current: int64(0),
 		},
