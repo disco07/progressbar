@@ -103,6 +103,35 @@ func TestNew(t *testing.T) {
 	}
 }
 
+func TestNew_Exceeds_Total(t *testing.T) {
+
+	tests := []struct {
+		description string
+		end         int64
+		expected    error
+	}{
+		{
+			description: "current exceeds total",
+			end:         10,
+			expected:    errors.New("current exceeds total"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.description, func(t *testing.T) {
+			var bar *Bar
+			bar = New(tt.end)
+			for i := 0; i <= int(tt.end); i++ {
+				err := bar.Add(1)
+
+				if err != nil && err.Error() != tt.expected.Error() {
+					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
+				}
+			}
+		})
+	}
+}
+
 func TestDefault(t *testing.T) {
 
 	tests := []struct {
