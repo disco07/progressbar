@@ -8,9 +8,8 @@ import (
 )
 
 type Bar struct {
-	rate   string
 	state  State
-	option Option
+	option option
 	theme  Theme
 }
 
@@ -21,11 +20,14 @@ type State struct {
 }
 
 type Theme struct {
+	rate       string
 	Graph      string
+	GraphStart string
+	GraphEnd   string
 	GraphWidth int64
 }
 
-type Option struct {
+type option struct {
 	total     int64
 	startTime time.Time
 }
@@ -37,25 +39,28 @@ func (b *Bar) SetTheme(t Theme) {
 	if t.GraphWidth != 0 {
 		b.theme.GraphWidth = t.GraphWidth
 	}
+	if t.GraphStart != "" {
+		b.theme.GraphStart = t.GraphStart
+	}
+	if t.GraphEnd != "" {
+		b.theme.GraphEnd = t.GraphEnd
+	}
 }
 
 func NewOption(end int64) *Bar {
-	current := int64(0)
-	total := end
-	graph := "█"
-	percent := getPercent(current, total)
-
 	return &Bar{
 		state: State{
-			percent: percent,
-			current: current,
+			percent: getPercent(int64(0), end),
+			current: int64(0),
 		},
 		theme: Theme{
-			Graph:      graph,
+			Graph:      "█",
+			GraphStart: "[",
+			GraphEnd:   "]",
 			GraphWidth: 50,
 		},
-		option: Option{
-			total:     total,
+		option: option{
+			total:     end,
 			startTime: time.Now(),
 		},
 	}
@@ -71,13 +76,15 @@ func (b *Bar) view() error {
 	lastGraphRate := b.state.currentGraphRate
 	b.state.currentGraphRate = int(b.state.percent / 100.0 * float64(b.theme.GraphWidth))
 	if b.state.percent != last {
-		b.rate += strings.Repeat(b.theme.Graph, b.state.currentGraphRate-lastGraphRate)
+		b.theme.rate += strings.Repeat(b.theme.Graph, b.state.currentGraphRate-lastGraphRate)
 	}
 	secondsLeft := time.Since(b.option.startTime).Seconds() / float64(b.state.current) * (float64(b.option.total) - float64(b.state.current))
 	fmt.Printf(
-		"\r[%-*s]%3d%% %4d/%d (%v-%v)",
+		"\r%s%-*s%s%3d%% %4d/%d (%v-%v)",
+		b.theme.GraphStart,
 		b.theme.GraphWidth,
-		b.rate,
+		b.theme.rate,
+		b.theme.GraphEnd,
 		int(b.state.percent),
 		b.state.current,
 		b.option.total,
