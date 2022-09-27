@@ -8,12 +8,20 @@ import (
 )
 
 type Bar struct {
+	state  State
+	option Option
+	theme  Theme
+}
+
+type State struct {
 	percent          float64
 	current          int64
-	rate             string
-	graph            string
 	currentGraphRate int
-	option           Option
+}
+
+type Theme struct {
+	rate  string
+	graph string
 }
 
 type Option struct {
@@ -29,9 +37,13 @@ func NewOption(end int64) *Bar {
 	percent := getPercent(current, total)
 
 	return &Bar{
-		percent: percent,
-		current: current,
-		graph:   graph,
+		state: State{
+			percent: percent,
+			current: current,
+		},
+		theme: Theme{
+			graph: graph,
+		},
 		option: Option{
 			total:      total,
 			graphWidth: 50,
@@ -45,21 +57,23 @@ func getPercent(current, total int64) float64 {
 }
 
 func (b *Bar) view() error {
-	last := b.percent
-	b.percent = getPercent(b.current, b.option.total)
-	lastGraphRate := b.currentGraphRate
-	b.currentGraphRate = int(b.percent / 100.0 * float64(b.option.graphWidth))
-	if b.percent != last {
-		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
+	last := b.state.percent
+	b.state.percent = getPercent(b.state.current, b.option.total)
+	lastGraphRate := b.state.currentGraphRate
+	b.state.currentGraphRate = int(b.state.percent / 100.0 * float64(b.option.graphWidth))
+	if b.state.percent != last {
+		b.theme.rate += strings.Repeat(b.theme.graph, b.state.currentGraphRate-lastGraphRate)
 	}
+	secondsLeft := time.Since(b.option.startTime).Seconds() / float64(b.state.current) * (float64(b.option.total) - float64(b.state.current))
 	fmt.Printf(
-		"\r[%-*s]%3d%% %5d/%d (%v)",
+		"\r[%-*s]%3d%% %4d/%d (%v-%v)",
 		b.option.graphWidth,
-		b.rate,
-		int(b.percent),
-		b.current,
+		b.theme.rate,
+		int(b.state.percent),
+		b.state.current,
 		b.option.total,
 		time.Since(b.option.startTime).Round(time.Second),
+		time.Duration(secondsLeft)*time.Second,
 	)
 
 	return nil
@@ -72,8 +86,8 @@ func (b *Bar) Add(num int) error {
 	}
 
 	currentNum := int64(num)
-	b.current += currentNum
-	if b.current > b.option.total {
+	b.state.current += currentNum
+	if b.state.current > b.option.total {
 		return errors.New("current exceeds total")
 	}
 	b.view()
