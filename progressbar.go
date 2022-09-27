@@ -47,7 +47,7 @@ func (b *Bar) SetTheme(t Theme) {
 	}
 }
 
-func NewOption(end int64) *Bar {
+func New(end int64) *Bar {
 	return &Bar{
 		state: State{
 			percent: getPercent(int64(0), end),
@@ -114,5 +114,5 @@ func (b *Bar) Add(num int) error {
 // In parameter, the max size of things you want to view progress.
 // It returns a pointer of Bar.
 func Default(end int64) *Bar {
-	return NewOption(end)
+	return New(end)
 }
