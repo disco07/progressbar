@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 )
 
 type Bar struct {
@@ -12,12 +13,13 @@ type Bar struct {
 	rate             string
 	graph            string
 	currentGraphRate int
-	config           config
+	option           Option
 }
 
-type config struct {
+type Option struct {
 	total      int64
 	graphWidth int64
+	startTime  time.Time
 }
 
 func NewOption(end int64) *Bar {
@@ -30,9 +32,10 @@ func NewOption(end int64) *Bar {
 		percent: percent,
 		current: current,
 		graph:   graph,
-		config: config{
+		option: Option{
 			total:      total,
 			graphWidth: 50,
+			startTime:  time.Now(),
 		},
 	}
 }
@@ -43,26 +46,34 @@ func getPercent(current, total int64) float64 {
 
 func (b *Bar) view() error {
 	last := b.percent
-	b.percent = getPercent(b.current, b.config.total)
+	b.percent = getPercent(b.current, b.option.total)
 	lastGraphRate := b.currentGraphRate
-	b.currentGraphRate = int(b.percent / 100.0 * float64(b.config.graphWidth))
+	b.currentGraphRate = int(b.percent / 100.0 * float64(b.option.graphWidth))
 	if b.percent != last {
 		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
 	}
-	fmt.Printf("\r[%-*s]%3d%% %5d/%d", b.config.graphWidth, b.rate, int(b.percent), b.current, b.config.total)
+	fmt.Printf(
+		"\r[%-*s]%3d%% %5d/%d (%v)",
+		b.option.graphWidth,
+		b.rate,
+		int(b.percent),
+		b.current,
+		b.option.total,
+		time.Since(b.option.startTime).Round(time.Second),
+	)
 
 	return nil
 }
 
 // Add is a func who add the number passed as a parameter to the progress bar.
 func (b *Bar) Add(num int) error {
-	if b.config.total == 0 {
+	if b.option.total == 0 {
 		return errors.New("the end must be greater than 0")
 	}
 
 	currentNum := int64(num)
 	b.current += currentNum
-	if b.current > b.config.total {
+	if b.current > b.option.total {
 		return errors.New("current exceeds total")
 	}
 	b.view()
