@@ -17,9 +17,7 @@ for i := 0; i < 100; i++ {
     time.Sleep(100 * time.Millisecond)
 }
 ```
-returns
-
-![Example of basic bar](Examples/basic/progressbar.gif)
+![Basic bar](Examples/basic/progressbar.gif)
 
 ## Contributing 🤝
 Contributions, issues, and feature requests are welcome!
