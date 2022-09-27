@@ -19,7 +19,7 @@ for i := 0; i < 100; i++ {
 ```
 returns
 
-![Alt Text](https://github.com/disco07/progressbar/Example/basic/progressbar.gif)
+![Alt Text](https://github.com/disco07/progressbar/blob/main/Example/basic/progressbar.gif)
 
 ## Contributing 🤝
 Contributions, issues, and feature requests are welcome!
