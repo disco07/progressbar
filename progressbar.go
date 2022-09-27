@@ -41,6 +41,19 @@ func getPercent(current, total int64) float64 {
 	return 100 * (float64(current) / float64(total))
 }
 
+func (b *Bar) view() error {
+	last := b.percent
+	b.percent = getPercent(b.current, b.config.total)
+	lastGraphRate := b.currentGraphRate
+	b.currentGraphRate = int(b.percent / 100.0 * float64(b.config.graphWidth))
+	if b.percent != last {
+		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
+	}
+	fmt.Printf("\r[%-*s]%3d%% %5d/%d", b.config.graphWidth, b.rate, int(b.percent), b.current, b.config.total)
+
+	return nil
+}
+
 // Add is a func who add the number passed as a parameter to the progress bar.
 func (b *Bar) Add(num int) error {
 	if b.config.total == 0 {
@@ -49,18 +62,10 @@ func (b *Bar) Add(num int) error {
 
 	currentNum := int64(num)
 	b.current += currentNum
-	last := b.percent
 	if b.current > b.config.total {
 		return errors.New("current exceeds total")
 	}
-	b.percent = getPercent(b.current, b.config.total)
-	lastGraphRate := b.currentGraphRate
-	b.currentGraphRate = int(b.percent / 100.0 * float64(b.config.graphWidth))
-	if b.percent != last {
-		b.rate += strings.Repeat(b.graph, b.currentGraphRate-lastGraphRate)
-	}
-	fmt.Printf("\r[%-50s]%3d%% %8d/%d", b.rate, int(b.percent), b.current, b.config.total)
-
+	b.view()
 	return nil
 }
 
