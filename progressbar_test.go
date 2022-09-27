@@ -6,6 +6,61 @@ import (
 	"time"
 )
 
+func TestSetTheme(t *testing.T) {
+	tests := []struct {
+		name      string
+		parameter Theme
+	}{
+		{
+			name: "testing graphType",
+			parameter: Theme{
+				GraphType:  "#",
+				GraphStart: "[",
+				GraphEnd:   "]",
+				GraphWidth: 50,
+			},
+		},
+		{
+			name: "testing graphStart",
+			parameter: Theme{
+				GraphStart: "|",
+				GraphType:  "█",
+				GraphEnd:   "]",
+				GraphWidth: 50,
+			},
+		},
+		{
+			name: "testing graphEnd",
+			parameter: Theme{
+				GraphStart: "[",
+				GraphType:  "█",
+				GraphEnd:   "|",
+				GraphWidth: 50,
+			},
+		},
+		{
+			name: "testing graphWith",
+			parameter: Theme{
+				GraphWidth: 10,
+				GraphStart: "[",
+				GraphType:  "█",
+				GraphEnd:   "]",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var bar *Bar
+			bar = NewOption(10)
+			bar.SetTheme(tt.parameter)
+			if bar.theme != tt.parameter {
+				t.Errorf("Bad parameter got %v want %v", bar.theme, tt.parameter)
+			}
+		})
+	}
+}
+
 func TestNewOption(t *testing.T) {
 
 	tests := []struct {
