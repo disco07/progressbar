@@ -2,6 +2,8 @@
 ![Coverage](https://img.shields.io/badge/Coverage-100.0%25-brightgreen)
 
 # progressbar
+A simple progress bar for golang projects. I created that because there was a long processus in some projet and I didn't know what was the progression.
+
 
 ## Installation
 ```golang
@@ -17,7 +19,7 @@ for i := 0; i < 100; i++ {
     time.Sleep(100 * time.Millisecond)
 }
 ```
-![Basic bar](Examples/basic/progressbar.gif)
+![Basic bar](examples/basic/progressbar.gif)
 
 ## Contributing 🤝
 Contributions, issues, and feature requests are welcome!
