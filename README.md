@@ -4,13 +4,13 @@
 # progressbar
 
 ## Installation
-```bash
+```golang
 go get -u github.com/disco07/progressbar
 ```
 
 ## Usage
 ### Basic usage
-```bash
+```golang
 bar := progressbar.Default(100)
 for i := 0; i < 100; i++ {
     bar.Add(1)
@@ -19,7 +19,7 @@ for i := 0; i < 100; i++ {
 ```
 returns
 
-![Alt Text](https://github.com/disco07/progressbar/Example/basic/progressbar.gif)
+![Example of basic bar](Examples/basic/progressbar.gif)
 
 ## Contributing 🤝
 Contributions, issues, and feature requests are welcome!
