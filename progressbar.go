@@ -22,6 +22,8 @@ type State struct {
 type Theme struct {
 	rate       string
 	Graph      string
+	GraphStart string
+	GraphEnd   string
 	GraphWidth int64
 }
 
@@ -37,6 +39,12 @@ func (b *Bar) SetTheme(t Theme) {
 	if t.GraphWidth != 0 {
 		b.theme.GraphWidth = t.GraphWidth
 	}
+	if t.GraphStart != "" {
+		b.theme.GraphStart = t.GraphStart
+	}
+	if t.GraphEnd != "" {
+		b.theme.GraphEnd = t.GraphEnd
+	}
 }
 
 func NewOption(end int64) *Bar {
@@ -47,6 +55,8 @@ func NewOption(end int64) *Bar {
 		},
 		theme: Theme{
 			Graph:      "█",
+			GraphStart: "[",
+			GraphEnd:   "]",
 			GraphWidth: 50,
 		},
 		option: option{
@@ -70,9 +80,11 @@ func (b *Bar) view() error {
 	}
 	secondsLeft := time.Since(b.option.startTime).Seconds() / float64(b.state.current) * (float64(b.option.total) - float64(b.state.current))
 	fmt.Printf(
-		"\r[%-*s]%3d%% %4d/%d (%v-%v)",
+		"\r%s%-*s%s%3d%% %4d/%d (%v-%v)",
+		b.theme.GraphStart,
 		b.theme.GraphWidth,
 		b.theme.rate,
+		b.theme.GraphEnd,
 		int(b.state.percent),
 		b.state.current,
 		b.option.total,
