@@ -40,22 +40,17 @@ func (b *Bar) SetTheme(t Theme) {
 }
 
 func NewOption(end int64) *Bar {
-	current := int64(0)
-	total := end
-	graph := "█"
-	percent := getPercent(current, total)
-
 	return &Bar{
 		state: State{
-			percent: percent,
-			current: current,
+			percent: getPercent(int64(0), end),
+			current: int64(0),
 		},
 		theme: Theme{
-			Graph:      graph,
+			Graph:      "█",
 			GraphWidth: 50,
 		},
 		option: option{
-			total:     total,
+			total:     end,
 			startTime: time.Now(),
 		},
 	}
