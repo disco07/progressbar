@@ -103,7 +103,7 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestNew_Exceeds_Total(t *testing.T) {
+func Test_Exceeds_Total(t *testing.T) {
 
 	tests := []struct {
 		description string
