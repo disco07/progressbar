@@ -1,4 +1,5 @@
 [![test](https://github.com/disco07/progressbar/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/disco07/progressbar/actions/workflows/test.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/disco07/progressbar.svg)](https://pkg.go.dev/github.com/disco07/progressbar)
 
 # progressbar
 A simple progress bar for golang projects. I created that because there was a long processus in some projet and I didn't know what was the progression.
