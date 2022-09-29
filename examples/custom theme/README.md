@@ -20,4 +20,4 @@ func main() {
 	}
 }
 ```
-![Custom bar](custom theme.gif)
+![Custom bar](customtheme.gif)
