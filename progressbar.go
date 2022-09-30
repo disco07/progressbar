@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -30,6 +31,7 @@ type Theme struct {
 type option struct {
 	total     int64
 	startTime time.Time
+	sync.Mutex
 }
 
 func (b *Bar) SetTheme(t Theme) {
@@ -97,6 +99,8 @@ func (b *Bar) view() error {
 
 // Add is a func who add the number passed as a parameter to the progress bar.
 func (b *Bar) Add(num int) error {
+	b.option.Lock()
+	defer b.option.Unlock()
 	if b.option.total == 0 {
 		return errors.New("the end must be greater than 0")
 	}
