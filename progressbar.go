@@ -102,7 +102,7 @@ func (b *Bar) Add(num int) error {
 	b.option.Lock()
 	defer b.option.Unlock()
 	if b.option.total == 0 {
-		return errors.New("the end must be greater than 0")
+		return errors.New("the end must be greater than zero")
 	}
 
 	currentNum := int64(num)

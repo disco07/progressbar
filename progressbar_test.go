@@ -76,7 +76,7 @@ func TestNew(t *testing.T) {
 		{
 			description: "the end must be greater than 0",
 			end:         0,
-			expected:    errors.New("the end must be greater than 0"),
+			expected:    errors.New("the end must be greater than zero"),
 		},
 	}
 
