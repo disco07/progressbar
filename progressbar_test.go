@@ -145,9 +145,9 @@ func TestDefault(t *testing.T) {
 			expected:    nil,
 		},
 		{
-			description: "the end must be greater than 0",
+			description: "the end must be greater than zero",
 			end:         0,
-			expected:    errors.New("the end must be greater than 0"),
+			expected:    errors.New("the end must be greater than zero"),
 		},
 	}
 
