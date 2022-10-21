@@ -174,6 +174,47 @@ func TestDefault(t *testing.T) {
 	}
 }
 
+func TestDefaultBytes(t *testing.T) {
+	tests := []struct {
+		desc     string
+		bytes    int64
+		expected error
+	}{
+		{
+			desc:     "work",
+			bytes:    100,
+			expected: nil,
+		},
+		{
+			desc:     "the end must be greater than zero",
+			bytes:    0,
+			expected: errors.New("the end must be greater than zero"),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			var bar *Bar
+			if tt.desc == "work" {
+				bar = DefaultBytes(tt.bytes + 1)
+			} else {
+				bar = DefaultBytes(tt.bytes)
+			}
+			for i := 0; i <= int(tt.bytes); i++ {
+				err := bar.Add(1)
+				time.Sleep(100 * time.Millisecond)
+				if tt.expected == nil && err != nil {
+					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
+				}
+
+				if tt.expected != nil && err.Error() != tt.expected.Error() {
+					t.Errorf("got %v want %v", err.Error(), tt.expected.Error())
+				}
+			}
+		})
+	}
+}
+
 func TestConvertTime(t *testing.T) {
 	tests := []struct {
 		desc     string
@@ -203,6 +244,50 @@ func TestConvertTime(t *testing.T) {
 
 			if tt.expected != hour {
 				t.Errorf("want %v got %v", tt.expected, hour)
+			}
+		})
+	}
+}
+
+func TestUnitFormat(t *testing.T) {
+	tests := []struct {
+		desc     string
+		it       float64
+		expected string
+	}{
+		{
+			desc:     "it >= math.Pow(1024, 4)",
+			it:       10000000000000,
+			expected: "9.09 TB",
+		},
+		{
+			desc:     "it >= math.Pow(1024, 3)",
+			it:       10000000000,
+			expected: "9.31 GB",
+		},
+		{
+			desc:     "it >= math.Pow(1024, 2)",
+			it:       10000000,
+			expected: "9.54 MB",
+		},
+		{
+			desc:     "it >= 1024",
+			it:       1024,
+			expected: "1.00 KB",
+		},
+		{
+			desc:     "it < 1024",
+			it:       1000,
+			expected: "1000.00 B",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			unit := unitFormat(tt.it)
+
+			if tt.expected != unit {
+				t.Errorf("want %v, got %v", tt.expected, unit)
 			}
 		})
 	}
