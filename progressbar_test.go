@@ -173,3 +173,37 @@ func TestDefault(t *testing.T) {
 		})
 	}
 }
+
+func TestConvertTime(t *testing.T) {
+	tests := []struct {
+		desc     string
+		time     uint
+		expected string
+	}{
+		{
+			desc:     "hour equal zero",
+			time:     1000,
+			expected: "16:40",
+		},
+		{
+			desc:     "time equal zero",
+			time:     0,
+			expected: "00:00",
+		},
+		{
+			desc:     "hour not equal zero",
+			time:     10000,
+			expected: "02:46:40",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			hour := convertTime(tt.time)
+
+			if tt.expected != hour {
+				t.Errorf("want %v got %v", tt.expected, hour)
+			}
+		})
+	}
+}

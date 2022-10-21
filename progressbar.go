@@ -57,9 +57,9 @@ func New(end int64) *Bar {
 		},
 		theme: Theme{
 			GraphType:  "█",
-			GraphStart: "[",
-			GraphEnd:   "]",
-			GraphWidth: 50,
+			GraphStart: "|",
+			GraphEnd:   "|",
+			GraphWidth: 60,
 		},
 		option: option{
 			total:     end,
@@ -80,18 +80,19 @@ func (b *Bar) view() error {
 	if b.state.percent != last {
 		b.theme.rate += strings.Repeat(b.theme.GraphType, b.state.currentGraphRate-lastGraphRate)
 	}
-	secondsLeft := time.Since(b.option.startTime).Seconds() / float64(b.state.current) * (float64(b.option.total) - float64(b.state.current))
+	timeSince := uint(time.Since(b.option.startTime).Seconds())
+	secondsLeft := uint(time.Since(b.option.startTime).Seconds() / float64(b.state.current) * (float64(b.option.total) - float64(b.state.current)))
 	fmt.Printf(
-		"\r%s%-*s%s%3d%% %4d/%d (%v-%v)",
+		"\r %3d%% %s%-*s%s [%v-%v, %d/%d]",
+		int(b.state.percent),
 		b.theme.GraphStart,
 		b.theme.GraphWidth,
 		b.theme.rate,
 		b.theme.GraphEnd,
-		int(b.state.percent),
+		convertTime(timeSince),
+		convertTime(secondsLeft),
 		b.state.current,
 		b.option.total,
-		time.Since(b.option.startTime).Round(time.Second),
-		time.Duration(secondsLeft)*time.Second,
 	)
 
 	return nil
@@ -119,4 +120,14 @@ func (b *Bar) Add(num int) error {
 // It returns a pointer of Bar.
 func Default(end int64) *Bar {
 	return New(end)
+}
+
+func convertTime(second uint) string {
+	var seconds = second % 60
+	var minutes = (second / 60) % 60
+	var hours = (second / 60) / 60
+	if hours == 0 {
+		return fmt.Sprintf("%02d:%02d", minutes, seconds)
+	}
+	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
 }
