@@ -2,6 +2,9 @@ package progressbar
 
 import (
 	"errors"
+	"io"
+	"net/http"
+	"os"
 	"testing"
 	"time"
 )
@@ -212,6 +215,47 @@ func TestDefaultBytes(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestWriter(t *testing.T) {
+	req, err := http.NewRequest("GET", "https://desktop.docker.com/win/main/amd64/Docker Desktop Installer.exe", nil)
+	if err != nil {
+		t.Error(err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Error(err)
+	}
+	defer resp.Body.Close()
+
+	f, _ := os.OpenFile("Docker Desktop Installer.exe", os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
+
+	bar := DefaultBytes(resp.ContentLength)
+	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
+	if err != nil {
+		t.Error(err)
+	}
+}
+func TestReader(t *testing.T) {
+	req, err := http.NewRequest("GET", "https://desktop.docker.com/win/main/amd64/Docker Desktop Installer.exe", nil)
+	if err != nil {
+		t.Error(err)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Error(err)
+	}
+	defer resp.Body.Close()
+
+	f, _ := os.OpenFile("Docker Desktop Installer.exe", os.O_CREATE|os.O_WRONLY, 0644)
+	defer f.Close()
+
+	bar := DefaultBytes(resp.ContentLength)
+	_, err = io.Copy(io.MultiWriter(f, bar), resp.Body)
+	if err != nil {
+		t.Error(err)
 	}
 }
 
