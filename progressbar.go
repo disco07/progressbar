@@ -3,6 +3,7 @@ package progressbar
 import (
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"strings"
 	"sync"
@@ -80,6 +81,8 @@ func (b *Bar) view() error {
 	var itPerS float64
 	// convert it to seconds in some format
 	var itUnits string
+	var current string
+	var total string
 	last := b.state.percent
 	b.state.percent = getPercent(b.state.current, b.option.total)
 	lastGraphRate := b.state.currentGraphRate
@@ -97,12 +100,16 @@ func (b *Bar) view() error {
 
 	if b.option.bytes {
 		itUnits = unitFormat(itPerS)
+		current = unitFormat(float64(b.state.current))
+		total = unitFormat(float64(b.option.total))
 	} else {
 		itUnits = fmt.Sprintf("%v it", itPerS)
+		current = fmt.Sprintf("%v", b.state.current)
+		total = fmt.Sprintf("%v", b.option.total)
 	}
 
 	fmt.Printf(
-		"\r %3d%% %s%-*s%s [%v-%v, %v, %d/%d]  ",
+		"\r %3d%% %s%-*s%s [%v-%v, %v/s, %v/%v] ",
 		int(b.state.percent),
 		b.theme.GraphStart,
 		b.theme.GraphWidth,
@@ -111,8 +118,8 @@ func (b *Bar) view() error {
 		convertTime(timeElapsed),
 		convertTime(timeLeft),
 		itUnits,
-		b.state.current,
-		b.option.total,
+		current,
+		total,
 	)
 
 	return nil
@@ -186,3 +193,52 @@ func unitFormat(it float64) string {
 
 	return fmt.Sprintf("%0.2f B", it)
 }
+
+// Reader is the progressbar io.Reader.
+type Reader struct {
+	io.Reader
+	bar *Bar
+}
+
+// NewReader return a new Reader with a given progress bar.
+func NewReader(r io.Reader, bar *Bar) Reader {
+	return Reader{
+		Reader: r,
+		bar:    bar,
+	}
+}
+
+// Read will read the data and add the number of bytes to the progressbar
+func (r *Reader) Read(byte []byte) (int, error) {
+	n, err := r.Reader.Read(byte)
+	r.bar.Add(n)
+	return n, err
+}
+
+//// Close the reader when it implements io.Closer
+//func (r *Reader) Close() (err error) {
+//	if closer, ok := r.Reader.(io.Closer); ok {
+//		return closer.Close()
+//	}
+//	r.bar.Finish()
+//	return
+//}
+
+// Write implement io.Writer
+func (b *Bar) Write(byte []byte) (n int, err error) {
+	n = len(byte)
+	b.Add(n)
+	return
+}
+
+// Read implement io.Reader
+func (b *Bar) Read(byte []byte) (n int, err error) {
+	n = len(byte)
+	b.Add(n)
+	return
+}
+
+//func (bar *Bar) Close() (err error) {
+//	p.Finish()
+//	return
+//}
