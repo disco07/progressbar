@@ -109,7 +109,7 @@ func (b *Bar) view() error {
 	}
 
 	fmt.Printf(
-		"\r %3d%% %s%-*s%s [%v-%v, %v/s, %v/%v] ",
+		"\r %3d%% %s%-*s%s [%v-%v, %v/s, %v/%v]     ",
 		int(b.state.percent),
 		b.theme.GraphStart,
 		b.theme.GraphWidth,
