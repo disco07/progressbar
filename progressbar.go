@@ -14,12 +14,14 @@ type Bar struct {
 	state  state
 	option option
 	theme  Theme
+	config config
 }
 
 type state struct {
 	percent          float64
 	current          int64
 	currentGraphRate int
+	finished         bool
 }
 
 type Theme struct {
@@ -30,11 +32,14 @@ type Theme struct {
 	GraphWidth int64
 }
 
+type config struct {
+	sync.Mutex
+}
+
 type option struct {
 	total     int64
 	startTime time.Time
 	bytes     bool
-	sync.Mutex
 }
 
 func (b *Bar) SetTheme(t Theme) {
@@ -55,8 +60,9 @@ func (b *Bar) SetTheme(t Theme) {
 func New(end int64) *Bar {
 	return &Bar{
 		state: state{
-			percent: getPercent(int64(0), end),
-			current: int64(0),
+			percent:  getPercent(int64(0), end),
+			current:  int64(0),
+			finished: false,
 		},
 		theme: Theme{
 			GraphType:  "█",
@@ -126,9 +132,9 @@ func (b *Bar) view() error {
 }
 
 // Add is a func who add the number passed as a parameter to the progress bar.
-func (b *Bar) Add(num int) error {
-	b.option.Lock()
-	defer b.option.Unlock()
+func (b *Bar) Add(num int) (err error) {
+	b.config.Lock()
+	defer b.config.Unlock()
 	if b.option.total == 0 {
 		return errors.New("the end must be greater than zero")
 	}
@@ -138,8 +144,16 @@ func (b *Bar) Add(num int) error {
 	if b.state.current > b.option.total {
 		return errors.New("current exceeds total")
 	}
-	b.view()
-	return nil
+
+	return b.view()
+}
+
+// Finish completes the bar to full.
+func (b *Bar) Finish() error {
+	b.config.Lock()
+	b.state.current = b.option.total
+	b.config.Unlock()
+	return b.Add(0)
 }
 
 // Default is a basic usage of progress bar.
@@ -215,30 +229,30 @@ func (r *Reader) Read(byte []byte) (int, error) {
 	return n, err
 }
 
-//// Close the reader when it implements io.Closer
-//func (r *Reader) Close() (err error) {
-//	if closer, ok := r.Reader.(io.Closer); ok {
-//		return closer.Close()
-//	}
-//	r.bar.Finish()
-//	return
-//}
-
-// Write implement io.Writer
-func (b *Bar) Write(byte []byte) (n int, err error) {
-	n = len(byte)
-	b.Add(n)
+// Close the reader when it implements io.Closer
+func (r *Reader) Close() (err error) {
+	if closer, ok := r.Reader.(io.Closer); ok {
+		return closer.Close()
+	}
+	r.bar.Finish()
 	return
 }
 
-// Read implement io.Reader
+// Read implement io.Reader for progress bar.
 func (b *Bar) Read(byte []byte) (n int, err error) {
 	n = len(byte)
 	b.Add(n)
 	return
 }
 
-//func (bar *Bar) Close() (err error) {
-//	p.Finish()
-//	return
-//}
+// Write implement io.Writer for progress bar.
+func (b *Bar) Write(byte []byte) (n int, err error) {
+	n = len(byte)
+	b.Add(n)
+	return
+}
+
+func (b *Bar) Close() (err error) {
+	b.Finish()
+	return
+}
